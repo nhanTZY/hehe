@@ -15,17 +15,60 @@
             background: linear-gradient(135deg, #ff758c, #ff7eb3);
             font-family: "Georgia", serif;
             color: white;
+            overflow: hidden;
             padding: 20px;
         }
 
-        .folder {
-            background: rgba(255, 255, 255, 0.25);
-            padding: 25px 40px;
-            border-radius: 20px;
-            font-size: 1.3em;
+        /* Floating hearts */
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: red;
+            transform: rotate(-45deg);
+            animation: float 5s linear infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: red;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 10px;
+            top: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(-45deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(-45deg); opacity: 0; }
+        }
+
+        /* Envelope */
+        .envelope {
+            width: 150px;
+            height: 100px;
+            background: pink;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
             cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: white;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
         .card {
@@ -35,6 +78,7 @@
             border-radius: 20px;
             max-width: 700px;
             line-height: 1.6;
+            z-index: 10;
         }
 
         h1 {
@@ -53,21 +97,23 @@
             font-size: 1.4em;
             font-weight: bold;
         }
+
     </style>
 </head>
 <body>
 
+    <!-- Floating hearts container -->
+    <div id="hearts"></div>
+
+    <!-- Envelope -->
+    <div class="envelope" id="envelope" onclick="openLetter()">
+        💌 Tap Me
+    </div>
+
     <!-- Background Music -->
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic" preload="auto" loop>
         <source src="music/love.mp3" type="audio/mpeg">
     </audio>
-
-    <!-- Folder -->
-    <div class="folder" id="folder" onclick="openLetter()">
-        📁 Open Me
-        <br>
-        <small>(Tap to open)</small>
-    </div>
 
     <!-- Love Letter -->
     <div class="card" id="letter">
@@ -88,8 +134,8 @@
             who would've thought that i would be pointing at my own face telling
             i'm a fool? it's ironic that have said that i have kicked out love
             from my life, that i don't have anything to do with it but look at me
-            now? giggling, blushing, and smiling over a guy that i thought would
-            only be a temporary feeling. fourth of november was the first day we
+            now? giggling, blushing, and smiling over a girl that i thought would
+            only be a temporary feeling. sixth of november was the first day we
             talked, who would've thought i'd celebrated fourteen of february with
             you?
         </p>
@@ -128,10 +174,30 @@
     </div>
 
     <script>
+        // Generate floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.animationDuration = (3 + Math.random() * 3) + 's';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+        setInterval(createHeart, 500);
+
+        // Open envelope function
         function openLetter() {
-            document.getElementById("folder").style.display = "none";
+            document.getElementById("envelope").style.display = "none";
             document.getElementById("letter").style.display = "block";
-            document.getElementById("bgMusic").play();
+
+            const music = document.getElementById("bgMusic");
+            music.volume = 0.7;
+            music.play().catch(() => {
+                alert("Tap the screen once more to play the music ❤️");
+            });
         }
     </script>
 
